@@ -54,14 +54,10 @@ public class ClientController {
             cl.setTELEPHONE(telephone);
             cl.setNBRE_CMDE(nbre_cmde);
 
-            //i JUST MATE A CHANGE
             ClientRepository.save(cl);
 
             return "saved";
     }
-
-
-    
 
     //update a client
     @PutMapping("/client/{id}")
@@ -72,9 +68,8 @@ public class ClientController {
         @RequestParam Character  sexe,
         @RequestParam Integer Telephone,
         @RequestParam Integer NBRE_CMDE ){
-
-
-            //this is a test
+        
+        //this is a test
 
 		Client cli = ClientRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Employee not exist with id :" + id));

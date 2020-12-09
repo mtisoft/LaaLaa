@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.server.laalaa.Repository.EquipeRepository;
+
+import java.util.Date;
+
 import com.server.laalaa.Model.Equipe;
 
 @Controller // This means that this class is a Controller
@@ -20,12 +23,24 @@ public class EquipeController {
   @PostMapping(path="/add") // Map ONLY POST Requests
   public @ResponseBody String addNewEquipe (
          @RequestParam String code_equipe, 
+         @RequestParam String libelle_equipe,
+         @RequestParam String couleur_equipe,
+         @RequestParam Integer tel_equipe,
+         @RequestParam Integer whatsapp_equipe,
+         @RequestParam String code_ville_equipe,
+         @RequestParam Date date_creat_equipe,
          @RequestParam String mat_superviseur ) {
     // @ResponseBody means the returned String is the response, not a view name
     // @RequestParam means it is a parameter from the GET or POST request
 
     Equipe eq = new Equipe();
     eq.setCODE_EQUIPE(code_equipe);
+    eq.setLIBELLE_EQUIPE(libelle_equipe);
+    eq.setCOULEUR_EQUIPE(couleur_equipe);
+    eq.setTEL_EQUIPE(tel_equipe);
+    eq.setWHATSAPP_EQUIPE(whatsapp_equipe);
+    eq.setCODEE_VILLE_EQUIPE(code_ville_equipe);
+    eq.setDATE_CREAT_EQUIPE(date_creat_equipe);
     eq.setMAT_SUPERVISEUR(mat_superviseur);
     
     equipeRepository.save(eq);

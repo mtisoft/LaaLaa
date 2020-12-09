@@ -1,5 +1,7 @@
 package com.server.laalaa.Model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,6 +17,8 @@ public class Users {
 
   private String PASSW;
 
+  private Boolean EN_SERVICE;
+
   private String CODE_TYPE;
 
   private String CODE_EQUIPE;
@@ -28,6 +32,10 @@ public class Users {
   private Integer TELEPHONE;
 
   private String POSTE;
+
+  private String CODE_VILLE_USER;
+
+  private Date DATE_CREAT_USER;
 
   public Integer getIDUSER() {
     return IDUSER;
@@ -107,6 +115,30 @@ public class Users {
 
   public void setPASSW(String pASSW) {
     PASSW = pASSW;
+  }
+
+  public Boolean getEN_SERVICE() {
+    return EN_SERVICE;
+  }
+
+  public void setEN_SERVICE(Boolean eN_SERVICE) {
+    EN_SERVICE = eN_SERVICE;
+  }
+
+  public Date getDATE_CREAT_USER() {
+    return DATE_CREAT_USER;
+  }
+
+  public void setDATE_CREAT_USER(Date dATE_CREAT_USER) {
+    DATE_CREAT_USER = dATE_CREAT_USER;
+  }
+
+  public String getCODE_VILLE_USER() {
+    return CODE_VILLE_USER;
+  }
+
+  public void setCODE_VILLE_USER(String cODE_VILLE_USER) {
+    CODE_VILLE_USER = cODE_VILLE_USER;
   }
 
 }
