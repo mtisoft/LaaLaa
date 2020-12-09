@@ -68,8 +68,6 @@ public class ClientController {
         @RequestParam Character  sexe,
         @RequestParam Integer Telephone,
         @RequestParam Integer NBRE_CMDE ){
-        
-        //this is a test
 
 		Client cli = ClientRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Employee not exist with id :" + id));
