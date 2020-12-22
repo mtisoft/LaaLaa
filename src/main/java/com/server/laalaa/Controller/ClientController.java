@@ -61,13 +61,13 @@ public class ClientController {
     }
 
     // update a client
-    @PutMapping("/client/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Client> updateClient(@PathVariable Integer id, @RequestParam String CODE_CLIENT,
             @RequestParam String Nom, @RequestParam String Prenom, @RequestParam Character sexe,
             @RequestParam Integer Telephone, @RequestParam Integer NBRE_CMDE) {
 
         Client cli = ClientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not exist with id :" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not exist with id :" + id));
 
         Client cli_fin = ClientRepository.save(cli);
         return ResponseEntity.ok(cli_fin);
@@ -80,7 +80,7 @@ public class ClientController {
     }
 
     // delete a client
-    @DeleteMapping("/client/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Map<String, Boolean>> deleteClient(@PathVariable Integer id) {
 
         Client cli = ClientRepository.findById(id)
@@ -93,7 +93,7 @@ public class ClientController {
     }
 
     // select a client
-    @GetMapping("/client/{id}")
+    @GetMapping("/select/{id}")
     public ResponseEntity<Client> getClientById(@PathVariable("id") Integer id_Client) {
         Client cli = ClientRepository.findById(id_Client)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not exist with id :" + id_Client));
@@ -126,11 +126,12 @@ public class ClientController {
     @GetMapping(path = "/{id}/identifiant/{code}")
     @ResponseBody ArrayList<Client> mutiplePathVariable(@PathVariable("id") Integer id, @PathVariable("code") String code) {
         //String qlString = "select c from Client c where id="+id+ " and code_CLIENT='"+code+"'";
-        String qlString = "select c from Client c where id="+id+ " or code_CLIENT='"+code+"'";
+        String qlString = "select  c.NOM , c.TELEPHONE from Client c where id="+id+ " or code_CLIENT='"+code+"'";
         System.out.println(qlString);
         Query query = entityManager.createQuery(qlString);
         ArrayList<Client> clients =(ArrayList<Client>)query.getResultList();
         return clients;
-  }
+    }
+    
     
 }

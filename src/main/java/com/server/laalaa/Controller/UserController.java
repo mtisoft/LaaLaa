@@ -2,14 +2,18 @@ package com.server.laalaa.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
 
+import com.server.laalaa.Exception.ResourceNotFoundException;
 import com.server.laalaa.Model.Users;
 import com.server.laalaa.Repository.UsersRepository;
 
@@ -24,7 +28,7 @@ public class UserController {
   // CREATION D UN UTILISATEUR.
   @PostMapping(path="/add") // Map ONLY POST Requests
   public @ResponseBody String addNewUser (
-         @RequestParam String matricule, 
+         //@RequestParam String matricule, 
          @RequestParam String passw,
          @RequestParam String code_type,
          @RequestParam String code_equipe,
@@ -38,32 +42,93 @@ public class UserController {
     // @ResponseBody means the returned String is the response, not a view name
     // @RequestParam means it is a parameter from the GET or POST request
 
-    Users n = new Users();
-    n.setMATRICULE(matricule);
-    n.setPASSW(passw);
-    n.setEN_SERVICE(false);
-    n.setCODE_TYPE(code_type);
-    n.setCODE_EQUIPE(code_equipe);
-    n.setNOM(nom);
-    n.setPRENOM(prenom);
-    n.setSEXE(sexe);
-    n.setTELEPHONE(telephone);
-    n.setPOSTE(poste);
-    n.setCODE_VILLE_USER(code_ville_user);
-    n.setDATE_CREAT_USER(date_creat_user);
+    String matricule = GenerateMatricule();  // generation matricule du nouvelle utilisateur.
 
-    usersRepository.save(n);
-    return "Saved";
+        Users n = new Users();
+        n.setMATRICULE(matricule);
+        n.setPASSW(passw);
+        n.setEN_SERVICE(false);
+        n.setCODE_TYPE(code_type);
+        n.setCODE_EQUIPE(code_equipe);
+        n.setNOM(nom);
+        n.setPRENOM(prenom);
+        n.setSEXE(sexe);
+        n.setTELEPHONE(telephone);
+        n.setPOSTE(poste);
+        n.setCODE_VILLE_USER(code_ville_user);
+        n.setDATE_CREAT_USER(date_creat_user);
+
+        usersRepository.save(n);
+        return "User created |  Matricule : "+ matricule;
   }
 
+
+  // retourne la liste complete des utilisateurs
   @GetMapping(path="/all")
   public @ResponseBody Iterable<Users> getAllUsers() {
     // This returns a JSON or XML with the users
     return usersRepository.findAll();
   }
 
-  // CODE  D ACTIVATION OU DE DEACTIVATION D UN UTILISATEUR.
-  // CODE DE MODIFICATION D UN UTILISATEUR. / AFFICHER UN UTILISATEUR (SELECT USER)
-  // Afficher la liste des comptes (recherche) en fonction du typed de compte et en fonction du Nom .  et du telephone
+
+  // GENERER LE MATRICULE D'UN UTILISATEUR.
+  public String GenerateMatricule(){
+     String mat="";  // le matricule generer est su 4 caracteres
+     Long cnt;
+     cnt = usersRepository.count();
+
+     switch (String.valueOf(cnt).length()){
+       case 1 : mat="000"+cnt;
+       case 2 : mat="00"+cnt;
+       case 3 : mat="0"+cnt;
+       case 4 : mat=""+cnt;
+     }
+     return mat;
+  }
+
+
+  // code de modification d'un utilisateur.
+     @PutMapping("/update/{id}")
+     public  @ResponseBody ResponseEntity<Users> updateUser(@PathVariable Integer id,
+        //@RequestParam String passw,
+        @RequestParam String code_type,
+        @RequestParam String code_equipe,
+        @RequestParam String nom,
+        @RequestParam String prenom,
+        @RequestParam char sexe,
+        @RequestParam Integer telephone,
+        @RequestParam Boolean EN_SERVICE,
+        @RequestParam String poste
+        // @RequestParam String code_ville_user,
+        //@RequestParam Date date_creat_user
+        ) {
+ 
+         Users user = usersRepository.findById(id)
+                 .orElseThrow(() -> new ResourceNotFoundException("User not exist with id :" + id));
+
+            user.setCODE_TYPE(code_type);
+            user.setCODE_EQUIPE(code_equipe);
+            user.setNOM(nom); 
+            user.setPRENOM(prenom);
+            user.setSEXE(sexe);
+            user.setTELEPHONE(telephone);
+            user.setEN_SERVICE(true);
+            user.setPOSTE(poste);
+            //user.setCODE_VILLE_USER(code_ville_user);
+            //user.setDATE_CREAT_USER(dATE_CREAT_USER);
+ 
+         Users user_fin = usersRepository.save(user);
+         return ResponseEntity.ok(user_fin);
+     }
+
+  // CODE  D'ACTIVATION OU DE DESACTIVATION D'UN UTILISATEUR.
+  // CODE DE MODIFICATION D UN UTILISATEUR
+  // AFFICHER UN UTILISATEUR en fonction de son id ou de son MATRICULE
+  // Afficher la liste complete des utilisates 
+  // Recherche en fonction du type_compte , du Nom  et du telephone
+  // MODIFIER LE MOT DE PASSE D'UN UTILISATEUR CONNAISSANT SON MATRICULE
+  // SUPPRIMER UN utilisateur
+
+  // AFFICHER LES REALISATIONS D UN UTILISATEUR. SUR UNE PERRIODE
   
 }
