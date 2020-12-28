@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -181,6 +182,26 @@ public class UserController {
   }
 
   // Recherche en fonction du type_compte , du Nom, telephone et du matricule
+  //@RequestMapping(method = RequestMethod.GET, path="/search")
+  @GetMapping("/search")
+  @ResponseBody ArrayList<Users> findUser (
+    @RequestParam(required = false) String code_type , 
+    @RequestParam(required = false) String nom , 
+    @RequestParam(required = false) Integer telp , 
+    @RequestParam(required = false) String mat
+    ){
+
+      //String qlString = " select u from Users u where (:"+code_type+" IS NULL or u.CODE_TYPE= :"+code_type+") AND (:"+nom+" IS NULL or u.NOM= :"+nom+") AND (:"+telp+"IS NULL or u.TELEPHONE=:"+telp+") AND  (:"+mat+" IS NULL or u.MATRICULE= :"+mat+")";
+      String qlString = " select u from Users u where (u.CODE_TYPE IS NULL or u.CODE_TYPE='"+code_type+"') AND (u.NOM IS NULL or u.NOM= '"+nom+"') AND (u.TELEPHONE IS NULL or u.TELEPHONE="+telp+") AND  (u.MATRICULE IS NULL or u.MATRICULE='"+mat+"')";
+      System.out.println(qlString);
+      Query query = entityManager.createQuery(qlString);
+      ArrayList<Users> resultlist = (ArrayList<Users>)query.getResultList();
+      return resultlist;
+
+
+    }
+  
+
 
   
   // MODIFIER LE MOT DE PASSE D'UN UTILISATEUR CONNAISSANT SON MATRICULE
