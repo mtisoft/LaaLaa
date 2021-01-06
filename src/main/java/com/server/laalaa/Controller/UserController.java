@@ -267,14 +267,38 @@ public class UserController {
   // MODIFIER LE MOT DE PASSE D'UN UTILISATEUR CONNAISSANT SON MATRICULE
   @PutMapping("/update/pass/{mat}/{pass}")
   @ResponseBody ResponseEntity<Map<String,Boolean>> updatePassword ( @PathVariable String mat,@PathVariable String pass ){
-    String ql = "update Users u set e=u.PASSW='"+pass+"'" + " where u.MATRICULE ='"+mat+"'";
-    System.out.println(ql);****************************
+    
+    // String ql = "update Users u set e=u.PASSW='"+pass+"'" + " where u.MATRICULE ='"+mat+"'";
+    /*
+    System.out.println(ql);
     Query query = entityManager.createQuery(ql);
     query.getResultList();
 
     Map<String, Boolean> response = new HashMap<>();
     response.put("Mot de passe mise a Jour", Boolean.TRUE);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(response); */
+
+    String qlString ="select u from Users u where matricule='"+mat+"'";
+    Query query = entityManager.createQuery(qlString);
+    ArrayList<Users> resultList = (ArrayList<Users>)query.getResultList();
+    
+    System.out.println(resultList.size());
+
+    if (resultList.size()>=0){
+      Users user = resultList.get(0);
+      user.setPASSW(pass);
+      usersRepository.save(user);
+      
+      Map<String, Boolean> response = new HashMap<>();
+      response.put("PASSWORD CHANGE", Boolean.TRUE);
+      return ResponseEntity.ok(response);
+    }else{
+      Map<String, Boolean> response = new HashMap<>();
+      response.put("PASSWORD CHANGE", Boolean.FALSE);
+      return ResponseEntity.ok(response);
+    }
+
+
   }
 
   // AFFICHER LES REALISATIONS D UN UTILISATEUR. SUR UNE PERRIODE
