@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.validation.constraints.Null;
 
 import com.server.laalaa.Exception.ResourceNotFoundException;
 import com.server.laalaa.Model.Users;
@@ -191,20 +192,91 @@ public class UserController {
     @RequestParam(required = false) String mat
     ){
 
+      boolean checkEmpty = true;
+      int nb_parm=0;  // compte le nombre de parametre non null passe en argument.
+
       //String qlString = " select u from Users u where (:"+code_type+" IS NULL or u.CODE_TYPE= :"+code_type+") AND (:"+nom+" IS NULL or u.NOM= :"+nom+") AND (:"+telp+"IS NULL or u.TELEPHONE=:"+telp+") AND  (:"+mat+" IS NULL or u.MATRICULE= :"+mat+")";
-      String qlString = " select u from Users u where (u.CODE_TYPE IS NULL or u.CODE_TYPE='"+code_type+"') AND (u.NOM IS NULL or u.NOM= '"+nom+"') AND (u.TELEPHONE IS NULL or u.TELEPHONE="+telp+") AND  (u.MATRICULE IS NULL or u.MATRICULE='"+mat+"')";
+      //String qlString = " select u from Users u where (u.CODE_TYPE IS NULL or u.CODE_TYPE='"+code_type+"') AND (u.NOM IS NULL or u.NOM= '"+nom+"') AND (u.TELEPHONE IS NULL or u.TELEPHONE="+telp+") AND  (u.MATRICULE IS NULL or u.MATRICULE='"+mat+"')";
+      //System.out.println(qlString);
+
+      //building query
+      String qlString = " select u from Users u where ";
+      if (code_type !=null ){
+          checkEmpty=false;
+
+          if (nb_parm >=1)
+          {
+            qlString = qlString + " AND " +  "u.CODE_TYPE='"+code_type+"'";
+          }else{
+            qlString = qlString + "u.CODE_TYPE='"+code_type+"'";
+          }
+         
+          nb_parm++;
+      }
+      if (nom !=null){
+          checkEmpty=false;
+          if (nb_parm >=1)
+          {
+            qlString = qlString + " AND " + "u.NOM= '"+nom+"'";
+          }else{
+            qlString = qlString + "u.NOM= '"+nom+"'";
+          }
+          nb_parm++;
+         
+      }
+
+      if (telp !=null){
+          checkEmpty=false;
+
+          if (nb_parm >=1)
+          {
+            qlString = qlString + " AND " + "u.TELEPHONE= "+telp+"";
+          }else{
+            qlString = qlString + "u.TELEPHONE= "+telp+"";
+          }
+
+          nb_parm++;
+      }
+      if (mat !=null){
+          checkEmpty=false;
+
+          if (nb_parm >=1)
+          {
+            qlString = qlString + " AND " + "u.MATRICULE= '"+mat+"'";
+          }else{
+            qlString = qlString + "u.MATRICULE= '"+mat+"'";
+          }
+
+          nb_parm++;
+      }
+
+      if (checkEmpty==true){
+        qlString="select u from Users u";
+      }
+
       System.out.println(qlString);
+
       Query query = entityManager.createQuery(qlString);
       ArrayList<Users> resultlist = (ArrayList<Users>)query.getResultList();
       return resultlist;
-
-
     }
   
 
 
   
   // MODIFIER LE MOT DE PASSE D'UN UTILISATEUR CONNAISSANT SON MATRICULE
+  @PutMapping("/update/pass/{mat}/{pass}")
+  @ResponseBody ResponseEntity<Map<String,Boolean>> updatePassword ( @PathVariable String mat,@PathVariable String pass ){
+    String ql = "update Users u set e=u.PASSW='"+pass+"'" + " where u.MATRICULE ='"+mat+"'";
+    System.out.println(ql);****************************
+    Query query = entityManager.createQuery(ql);
+    query.getResultList();
+
+    Map<String, Boolean> response = new HashMap<>();
+    response.put("Mot de passe mise a Jour", Boolean.TRUE);
+    return ResponseEntity.ok(response);
+  }
+
   // AFFICHER LES REALISATIONS D UN UTILISATEUR. SUR UNE PERRIODE
   
 }
